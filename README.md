@@ -23,3 +23,7 @@ Add `electron-forge import` to configure the project.
 Run `npm run package` to build the project or run `npm run make` to build the project for multiple platforms.
 
 Generate ICON `./node_modules/.bin/electron-icon-maker --input=/absolute/path/file.png --output=./relative/path/to/folder` and add path to package.json
+
+## Overview
+
+![alt text](https://github.com/appit-online/better-pull-request-ui/blob/main/buildResources/screenshot.png?raw=true)
