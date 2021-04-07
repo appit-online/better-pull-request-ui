@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-lg-12 equel-grid">
+    <div class="grid">
+      <p class="grid-header">Git Settings</p>
+      <div class="grid-body">
+        <div class="item-wrapper">
+            <div class="form-group">
+              <label for="hostname">Hostname</label>
+              <input type="text" [(ngModel)]="settings.hostname" class="form-control" id="hostname" placeholder="Enter your hostname e.g. https://git.com/api/v3">
+            </div>
+            <div class="form-group">
+              <label for="apiToken">API-Token</label>
+              <input type="text" [(ngModel)]="settings.apiToken" class="form-control" id="apiToken" placeholder="Enter your API-Token">
+            </div>
+          <div class="form-group">
+            <label for="orgName">Organisation Name</label>
+            <input type="text" [(ngModel)]="settings.orgName" class="form-control" id="orgName" placeholder="Enter your repo organisation name">
+          </div>
+          <button type="submit" (click)="updateSettings()" class="btn btn-sm btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

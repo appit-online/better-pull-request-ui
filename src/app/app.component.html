@@ -1,0 +1,62 @@
+
+<nav class="t-header">
+  <div class="t-header-brand-wrapper">
+    <a href="index.html">
+      <img class="logo" src="../assets/images/logo.svg" alt="">
+      <img class="logo-mini" src="../assets/images/logo_mini.svg" alt="">
+    </a>
+  </div>
+</nav>
+<div class="page-body">
+  <div class="sidebar">
+    <div class="user-profile">
+      <div class="display-avatar animated-avatar">
+        <img class="profile-img img-lg rounded-circle" src="./assets/images/profile/male/image_2.png" alt="profile image">
+      </div>
+      <div class="info-wrapper">
+        <p class="user-name">{{this.userData?.name}}</p>
+      </div>
+    </div>
+    <ul class="navigation-menu">
+      <li class="nav-category-divider">Navigation</li>
+      <li>
+        <a routerLink="/home">
+          <span class="link-title">Home</span>
+          <i class="mdi mdi-home link-icon"></i>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/settings">
+          <span class="link-title">Settings</span>
+          <i class="mdi mdi-settings-outline link-icon"></i>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-upgrade-banner">
+      <p class="text-gray"><b class="text-primary">Donate</b> for more exciting features</p>
+      <a class="btn upgrade-btn"(click)="openUrl($event, 'https://paypal.me/dave7117')">Donate to AppIT</a>
+    </div>
+  </div>
+  <div class="page-content-wrapper">
+    <div class="page-content-wrapper-inner">
+      <div class="content-viewport">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="row">
+        <div class="col-sm-6 text-center text-sm-right order-sm-1">
+          <ul class="text-gray">
+            <li><a (click)="openUrl($event, 'https://blog.appit-online.de/impressum')">Terms of use</a></li>
+            <li><a (click)="openUrl($event, 'https://apps.appit-online.de/agb')">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-6 text-center text-sm-left mt-3 mt-sm-0">
+          <small class="text-muted d-block">Copyright &copy; {{this.dateYear}} <a (click)="openUrl($event, 'https://www.freepik.com/vectors/logo')">Logo vector created by fullvector</a></small>
+          <small class="text-muted d-block">Copyright &copy; {{this.dateYear}} <a (click)="openUrl($event, 'https://www.appit-online.de')">App-IT</a>. All rights reserved</small>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{
+  "name": "PullRequests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^11.3.0"
+  },
+  "dependencies": {
+    "@octokit/core": "^3.2.5",
+    "octonode": "^0.10.0"
+  }
+}

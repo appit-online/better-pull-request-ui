@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+@import './assets/scss/shared/style.scss';
+@import './assets/scss/light/style.scss';
+@import './assets/vendors/iconfonts/mdi/scss/materialdesignicons.scss';
+
+.toast-success {
+  background-color: #4CCEAC;
+}
+.toast-error {
+  background-color: #DB504A;
+}
