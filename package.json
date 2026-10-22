@@ -13,6 +13,7 @@
     "electron": "npm run build-electron && NODE_OPTIONS= ./node_modules/.bin/electron dist/",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "publish": "npm run build-electron && electron-forge publish",
     "make-linux": "electron-forge make --platform linux --targets deb",
     "make-win": "electron-forge make --platform=win32"
   },
@@ -41,9 +42,11 @@
     "@angular/compiler-cli": "~11.2.3",
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-dmg": "^8.0.1",
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "@electron-forge/publisher-github": "^8.0.1",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
@@ -67,6 +70,20 @@
       "packagerConfig": {
         "icon": "buildResources/icons/mac/icon.icns"
       },
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "appit-online",
+              "name": "better-pull-request-ui"
+            },
+            "prerelease": false,
+            "draft": false,
+            "generateReleaseNotes": true
+          }
+        }
+      ],
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -75,10 +92,10 @@
           }
         },
         {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "format": "ULFO"
+          }
         },
         {
           "name": "@electron-forge/maker-deb",
