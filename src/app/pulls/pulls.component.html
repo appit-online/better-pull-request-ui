@@ -1,55 +1,135 @@
 
-<div class="row">
-  <div class="col-12 mb-4">
-    <h4>Dashboard</h4>
-    <p class="text-gray">Manage your requested reviews</p>
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="page-header">
+      <div>
+        <h4 class="page-title">Dashboard</h4>
+        <p class="page-subtitle">Awaiting your review</p>
+      </div>
+    </div>
   </div>
 </div>
+
 <div class="row">
-  <div class="col-lg-12">
+  <div class="col-12">
     <div class="grid">
-      <p class="grid-header pb-4">Open Pull Requests
-        <button style="float:right" (click)="getPullRequests()" class="btn btn-primary" type="submit"><i class="mdi mdi-refresh"></i>Refresh</button>
-      </p>
-      <div class="item-wrapper">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Repo Name</th>
-                <th>PR Number</th>
-                <th>Url</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-             <tr *ngFor="let pull of pullRequests" (click)="openUrl($event, pull?.node?.url)">
-               <td>{{pull?.node?.author?.login}}</td>
-               <td>{{pull?.node?.title}}</td>
-               <td>
-                 <label class="badge badge-success" *ngIf="pull?.node?.commits?.nodes[0]?.commit?.status?.state == 'SUCCESS'" (click)="$event.preventDefault();openUrl($event, pull?.node?.commits?.nodes[0]?.commit?.status?.contexts[0]?.targetUrl)" >{{pull?.node?.commits?.nodes[0]?.commit?.status?.state}}</label>
-                 <label class="badge badge-danger" *ngIf="pull?.node?.commits?.nodes[0]?.commit?.status?.state == 'FAILURE'" (click)="$event.preventDefault();openUrl($event, pull?.node?.commits?.nodes[0]?.commit?.status?.contexts[0]?.targetUrl)" >{{pull?.node?.commits?.nodes[0]?.commit?.status?.state}}</label>
-                 <label class="badge badge-info"
-                        *ngIf="pull?.node?.commits?.nodes[0]?.commit?.status?.state != 'FAILURE' &&
-                          pull?.node?.commits?.nodes[0]?.commit?.status?.state != 'SUCCESS'"
-                        (click)="$event.preventDefault();openUrl($event, pull?.node?.commits?.nodes[0]?.commit?.status?.contexts[0]?.targetUrl)" >{{pull?.node?.commits?.nodes[0]?.commit?.status?.state}}</label>
-               </td>
-               <td>{{pull?.node?.repository?.name}}</td>
-               <td>{{pull?.node?.number}}</td>
-               <td>
-                 <div class="btn btn-primary has-icon btn-rounded" (click)="openUrl($event, pull?.node?.url)">
-                   <i class="mdi mdi mdi-open-in-new"></i>Open PR
-                 </div>
-               </td>
-               <td>{{pull?.node?.createdAt | date: 'short'}}</td>
-             </tr>
-            </tbody>
-          </table>
+      <div class="pr-list-header">
+        <span class="pr-list-title">Review Requests</span>
+        <span class="pr-count-badge" *ngIf="!isLoading">{{ pullRequests.length }}</span>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div *ngIf="isLoading" class="pr-skeleton">
+        <div class="skeleton-item" *ngFor="let i of [1,2,3,4,5]">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line skeleton-line-long"></div>
+            <div class="skeleton-line skeleton-line-short"></div>
+          </div>
         </div>
       </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoading && pullRequests.length === 0" class="pr-empty">
+        <i class="mdi mdi-source-pull pr-empty-icon"></i>
+        <p class="pr-empty-text">Nothing to review right now</p>
+        <p class="pr-empty-hint">Make sure you're set as a Reviewer on open requests</p>
+      </div>
+
+      <!-- Grouped PR list -->
+      <div *ngIf="!isLoading" class="pr-list">
+        <ng-container *ngFor="let group of groupedPullRequests; let groupLast = last">
+
+          <!-- Single item — full row -->
+          <ng-container *ngIf="group.items.length === 1">
+            <div class="pr-item" [class.pr-item-last]="groupLast"
+              (click)="openUrl($event, group.items[0]?.node?.url)">
+
+              <div class="pr-avatar-wrap">
+                <div class="pr-avatar-fallback">{{ getInitial(group.items[0]?.node?.author?.login) }}</div>
+                <img class="pr-avatar" [src]="group.items[0]?.node?.author?.avatarUrl"
+                  [alt]="group.items[0]?.node?.author?.login"
+                  (error)="asImg($event.target).style.display='none'">
+              </div>
+
+              <div class="pr-body">
+                <div class="pr-title">{{ group.title }}</div>
+                <div class="pr-meta">
+                  <span class="pr-author-name">{{ group.items[0]?.node?.author?.name || group.items[0]?.node?.author?.login }}</span>
+                  <span class="pr-sep">·</span>
+                  <span class="pr-repo">{{ group.items[0]?.node?.repository?.name }}</span>
+                  <span class="pr-sep">·</span>
+                  <span>#{{ group.items[0]?.node?.number }}</span>
+                  <span class="pr-sep">·</span>
+                  <span>{{ group.items[0]?.node?.createdAt | date: 'dd.MM.yy HH:mm' }}</span>
+                </div>
+              </div>
+
+              <div class="pr-actions">
+                <span class="badge pr-badge"
+                  *ngIf="group.items[0]?.node?.commits?.nodes[0]?.commit?.status?.state"
+                  [ngClass]="getStatusClass(group.items[0]?.node?.commits?.nodes[0]?.commit?.status?.state)">
+                  {{ group.items[0]?.node?.commits?.nodes[0]?.commit?.status?.state }}
+                </span>
+                <button class="btn-open-pr" (click)="openUrl($event, group.items[0]?.node?.url)" title="Open">
+                  <i class="mdi mdi-open-in-new"></i>
+                </button>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Multiple items — collapsible group -->
+          <ng-container *ngIf="group.items.length > 1">
+            <div class="pr-group-header" [class.pr-group-header-last]="groupLast && !group.expanded"
+              (click)="toggleGroup(group)">
+              <i class="mdi pr-group-chevron"
+                [ngClass]="group.expanded ? 'mdi-chevron-down' : 'mdi-chevron-right'"></i>
+              <span class="pr-group-title">{{ group.title }}</span>
+              <span class="pr-group-count">{{ group.items.length }}</span>
+            </div>
+
+            <div *ngIf="group.expanded" class="pr-group-items">
+              <div *ngFor="let pull of group.items; let childLast = last"
+                class="pr-item pr-item-child"
+                [class.pr-item-last]="groupLast && childLast"
+                (click)="openUrl($event, pull?.node?.url)">
+
+                <div class="pr-avatar-wrap">
+                  <div class="pr-avatar-fallback">{{ getInitial(pull?.node?.author?.login) }}</div>
+                  <img class="pr-avatar" [src]="pull?.node?.author?.avatarUrl"
+                    [alt]="pull?.node?.author?.login"
+                    (error)="asImg($event.target).style.display='none'">
+                </div>
+
+                <div class="pr-body">
+                  <div class="pr-meta">
+                    <span class="pr-author-name">{{ pull?.node?.author?.name || pull?.node?.author?.login }}</span>
+                    <span class="pr-sep">·</span>
+                    <span class="pr-repo">{{ pull?.node?.repository?.name }}</span>
+                    <span class="pr-sep">·</span>
+                    <span>#{{ pull?.node?.number }}</span>
+                    <span class="pr-sep">·</span>
+                    <span>{{ pull?.node?.createdAt | date: 'dd.MM.yy HH:mm' }}</span>
+                  </div>
+                </div>
+
+                <div class="pr-actions">
+                  <span class="badge pr-badge"
+                    *ngIf="pull?.node?.commits?.nodes[0]?.commit?.status?.state"
+                    [ngClass]="getStatusClass(pull?.node?.commits?.nodes[0]?.commit?.status?.state)">
+                    {{ pull?.node?.commits?.nodes[0]?.commit?.status?.state }}
+                  </span>
+                  <button class="btn-open-pr" (click)="openUrl($event, pull?.node?.url)" title="Open">
+                    <i class="mdi mdi-open-in-new"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+        </ng-container>
+      </div>
+
     </div>
   </div>
 </div>

@@ -1,0 +1,116 @@
+.t-header {
+  .brand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #5c67d4;
+    letter-spacing: -0.3px;
+  }
+}
+
+.sidebar {
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid #f0f2f5;
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-avatar {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .sidebar-avatar-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .avatar-initials {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #5c67d4, #7c3aed);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .sidebar-username {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2d3748;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  .sidebar-nav-section {
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #a0aec0;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin: 2px 0.75rem;
+    }
+  }
+
+  .sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    color: #4a5568;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #f7f8ff;
+      color: #5c67d4;
+      text-decoration: none;
+    }
+
+    &.active {
+      background: #eef0fd;
+      color: #5c67d4;
+      font-weight: 600;
+    }
+  }
+
+  .sidebar-nav-icon {
+    font-size: 1.15rem;
+    margin-right: 0.6rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+}
+
+.footer {
+  padding: 1rem 0;
+  text-align: center;
+}

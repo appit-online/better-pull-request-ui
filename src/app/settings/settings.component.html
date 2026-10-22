@@ -4,19 +4,76 @@
       <p class="grid-header">Git Settings</p>
       <div class="grid-body">
         <div class="item-wrapper">
-            <div class="form-group">
-              <label for="hostname">Hostname</label>
-              <input type="text" [(ngModel)]="settings.hostname" class="form-control" id="hostname" placeholder="Enter your hostname e.g. https://git.com/api/v3">
-            </div>
-            <div class="form-group">
-              <label for="apiToken">API-Token</label>
-              <input type="text" [(ngModel)]="settings.apiToken" class="form-control" id="apiToken" placeholder="Enter your API-Token">
-            </div>
+
           <div class="form-group">
-            <label for="orgName">Organisation Name</label>
-            <input type="text" [(ngModel)]="settings.orgName" class="form-control" id="orgName" placeholder="Enter your repo organisation name">
+            <label for="provider">Provider</label>
+            <select [(ngModel)]="settings.provider" class="form-control" id="provider">
+              <option value="github">GitHub / GitHub Enterprise</option>
+              <option value="gitlab">GitLab / GitLab Self-Managed</option>
+            </select>
           </div>
-          <button type="submit" (click)="updateSettings()" class="btn btn-sm btn-primary">Save</button>
+
+          <div class="form-group">
+            <label for="hostname">Hostname</label>
+            <input type="text" [(ngModel)]="settings.hostname" class="form-control" id="hostname"
+              [placeholder]="settings.provider === 'gitlab' ? 'e.g. https://gitlab.mycompany.com' : 'e.g. https://github.mycompany.com/api/v3'">
+          </div>
+
+          <div class="form-group">
+            <label for="apiToken">API-Token / Personal Access Token</label>
+            <input type="password" [(ngModel)]="settings.apiToken" class="form-control" id="apiToken"
+              [placeholder]="settings.provider === 'gitlab' ? 'GitLab Personal Access Token (api scope)' : 'GitHub Personal Access Token'">
+          </div>
+
+          <!-- Token expiry info (GitLab only) -->
+          <div class="token-expiry-info" *ngIf="settings.provider === 'gitlab' && tokenExpiresAt">
+            <i class="mdi mdi-clock-outline expiry-icon"></i>
+            <span class="expiry-label">Token expires:</span>
+            <span class="expiry-date" [class.expiry-warning]="tokenDaysLeft !== null && tokenDaysLeft <= 7"
+              [class.expiry-danger]="tokenDaysLeft !== null && tokenDaysLeft <= 2">
+              {{ tokenExpiresAt | date: 'dd.MM.yyyy' }}
+              <span *ngIf="tokenDaysLeft !== null">({{ tokenDaysLeft }} {{ tokenDaysLeft === 1 ? 'day' : 'days' }})</span>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="orgName">{{ settings.provider === 'gitlab' ? 'Group Name (optional)' : 'Organisation Name (optional)' }}</label>
+            <input type="text" [(ngModel)]="settings.orgName" class="form-control" id="orgName"
+              [placeholder]="settings.provider === 'gitlab' ? 'Enter your GitLab group name' : 'Enter your GitHub organisation name'">
+          </div>
+
+          <!-- Auto-rotate toggle (GitLab only) -->
+          <div class="form-group" *ngIf="settings.provider === 'gitlab'">
+            <div class="auto-rotate-toggle">
+              <div class="toggle-info">
+                <span class="toggle-label">Auto-rotate token</span>
+                <p class="toggle-hint">Renews the token automatically before expiry. Requires <code>api</code> scope.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="settings.autoRotateToken">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Buffer days (only when auto-rotate is on) -->
+          <div class="form-group buffer-days-group"
+            *ngIf="settings.provider === 'gitlab' && settings.autoRotateToken">
+            <label for="rotateBufferDays">Rotate when fewer than <strong>{{ settings.rotateBufferDays }}</strong> {{ +settings.rotateBufferDays === 1 ? 'day' : 'days' }} remaining</label>
+            <input type="range" [ngModel]="settings.rotateBufferDays"
+              (ngModelChange)="settings.rotateBufferDays = +$event"
+              class="buffer-slider" id="rotateBufferDays" min="1" max="14" step="1">
+            <div class="buffer-range-labels">
+              <span>1 day</span>
+              <span>14 days</span>
+            </div>
+          </div>
+
+          <button type="submit" (click)="updateSettings()" class="btn-save">
+            <i class="mdi mdi-content-save"></i>
+            <span>Save Settings</span>
+          </button>
+
         </div>
       </div>
     </div>

@@ -29,6 +29,9 @@ export class AppComponent {
   }
 
   // tslint:disable-next-line:typedef
+  asImg(t: EventTarget | null) { return t as HTMLImageElement; }
+
+  // tslint:disable-next-line:typedef
   openUrl(event: any, targetUrl: any) {
     electron.ipcRenderer.send('openUrl', targetUrl);
   }
